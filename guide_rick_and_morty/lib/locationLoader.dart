@@ -22,6 +22,5 @@ Future<LocationDetails> loadLocation(int id) async {
   location.dimension = item["dimension"];
   location.created = item["created"];
 
-  print(location.name);
   return location;
 }

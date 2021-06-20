@@ -21,6 +21,7 @@ class _State extends State<PersonDetailsPage>{
   int id;
   PersonDetails? person;
   LocationDetails? location;
+  Image? img;
 
   @override
   void initState(){
@@ -35,43 +36,84 @@ class _State extends State<PersonDetailsPage>{
       person = personInfo;
       location = locationInfo;
     });
+
+    setState((){
+      if(person != null){
+        img = Image.network(
+          person!.avatar,
+          width: double.infinity,
+        );
+      }
+    });
+  }
+
+  BorderSide getBorderSide(bool flag){
+    if(flag == true){
+      return BorderSide(
+          color: Colors.black,
+          width: 3.0
+      );
+    }
+
+    return BorderSide(
+        color: Colors.white,
+        width: 0
+    );
+  }
+  
+  Widget getTextWidget(String text, bool flag){
+    return Flexible(
+        child: Container(
+          width: 1000,
+          decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                    color: Colors.black,
+                    width: 3.0
+
+                ),
+                top: getBorderSide(flag),
+              )
+          ),
+          margin: new EdgeInsets.all(0),
+          padding: new EdgeInsets.all(10),
+          child: Text(
+            text,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 20,
+            ),
+          ),
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
     var widget;
-    if (person == null) {
+    if ((person == null) || (location == null) || (img == null)) {
       widget = Center(child: Text("Please, wait..."));
-    } else if ((person != null) && (location == null)) {
-      widget = SafeArea(
-          child: Column(
-        children: [
-          GestureDetector(
-            child: Image.network(
-              person!.avatar,
-              width: double.infinity,
-            ),
-          ),
-          Text("Please, wait..."),
-        ],
-      ));
     }else{
       widget = SafeArea(
           child: Column(
             children: [
               GestureDetector(
-                child: Image.network(
-                  person!.avatar,
-                  width: double.infinity,
+                child: img,
+              ),
+              Container(
+                margin: new EdgeInsets.fromLTRB(0, 0, 0, 10),
+                padding: new EdgeInsets.all(10),
+                child: Text(
+                  "Location",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
               ),
-              Text("Name: " + location!.name +
-                  "\n" +
-                  "Type: " + location!.type +
-                  "\n" +
-                  "Dimension: " + location!.dimension +
-                  "\n" +
-                  "Location: " + location!.created),
+              getTextWidget("Name: " + location!.name, true),
+              getTextWidget("Type: " + location!.type, false),
+              getTextWidget("Dimension: " + location!.type, false),
+              getTextWidget("Created: " + location!.created, false),
             ],
           ));
     }
